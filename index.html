@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Latest Updates – ExamTip</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<style>
+body{
+  font-family:system-ui,-apple-system,"Segoe UI",Roboto;
+  background:#f4f6fb;
+  margin:0;
+  padding:10px;
+}
+.feed-box{
+  max-width:900px;
+  margin:auto;
+}
+.post{
+  background:#fff;
+  padding:15px;
+  margin-bottom:12px;
+  border-radius:8px;
+  box-shadow:0 2px 8px rgba(0,0,0,.06);
+}
+.post h3{
+  margin:0 0 6px;
+  font-size:18px;
+}
+.post a{
+  text-decoration:none;
+  color:#0b57d0;
+}
+.post p{
+  margin:0;
+  color:#555;
+  font-size:14px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="feed-box" id="feed"></div>
+
+<script>
+const feedURL =
+"https://www.examtip.in/feeds/posts/default?alt=json&max-results=20";
+
+fetch(feedURL)
+.then(res => res.json())
+.then(data => {
+  let html = "";
+  data.feed.entry.forEach(post => {
+    let title = post.title.$t;
+    let link = post.link.find(l => l.rel === "alternate").href;
+    let summary = post.summary ? post.summary.$t.substring(0,120)+"..." : "";
+    
+    html += `
+      <div class="post">
+        <h3><a href="${link}" target="_blank">${title}</a></h3>
+        <p>${summary}</p>
+      </div>`;
+  });
+  document.getElementById("feed").innerHTML = html;
+});
+</script>
+
+</body>
+</html>
