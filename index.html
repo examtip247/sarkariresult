@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
 <meta charset="UTF-8">
 <title>Latest Updates – ExamTip</title>
@@ -18,23 +18,23 @@ body{
 }
 .post{
   background:#fff;
-  padding:15px;
+  padding:14px;
   margin-bottom:12px;
   border-radius:8px;
-  box-shadow:0 2px 8px rgba(0,0,0,.06);
+  box-shadow:0 2px 6px rgba(0,0,0,.08);
 }
 .post h3{
   margin:0 0 6px;
-  font-size:18px;
+  font-size:17px;
 }
 .post a{
-  text-decoration:none;
   color:#0b57d0;
+  text-decoration:none;
 }
 .post p{
-  margin:0;
-  color:#555;
   font-size:14px;
+  color:#555;
+  margin:0;
 }
 </style>
 </head>
@@ -44,27 +44,31 @@ body{
 <div class="feed-box" id="feed"></div>
 
 <script>
-const feedURL =
-"https://www.examtip.in/feeds/posts/default?alt=json&max-results=20";
+function showFeed(json){
+  var html = "";
+  for(var i=0;i<json.feed.entry.length;i++){
+    var post = json.feed.entry[i];
+    var title = post.title.$t;
+    var link = "";
+    for(var j=0;j<post.link.length;j++){
+      if(post.link[j].rel=="alternate"){
+        link = post.link[j].href;
+        break;
+      }
+    }
+    var summary = post.summary ? post.summary.$t.replace(/<[^>]+>/g,'').substring(0,120)+"..." : "";
 
-fetch(feedURL)
-.then(res => res.json())
-.then(data => {
-  let html = "";
-  data.feed.entry.forEach(post => {
-    let title = post.title.$t;
-    let link = post.link.find(l => l.rel === "alternate").href;
-    let summary = post.summary ? post.summary.$t.substring(0,120)+"..." : "";
-    
     html += `
       <div class="post">
         <h3><a href="${link}" target="_blank">${title}</a></h3>
         <p>${summary}</p>
       </div>`;
-  });
+  }
   document.getElementById("feed").innerHTML = html;
-});
+}
 </script>
+
+<script src="https://www.examtip.in/feeds/posts/default?alt=json-in-script&max-results=20&callback=showFeed"></script>
 
 </body>
 </html>
